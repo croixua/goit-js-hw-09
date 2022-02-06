@@ -29,9 +29,17 @@ function createPromise(position, delay) {
 
   return new Promise((resolve, reject) => {
     if (shouldResolve) {
-      resolve(onSucces(position, delay));
+      resolve(Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`));
     } else {
-      reject(onError(position, delay));
+      reject(Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`));
     }
   });
 }
+
+createPromise(2, 1500)
+  .then(() => {
+    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+  })
+  .catch(() => {
+    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+  });
