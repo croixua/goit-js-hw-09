@@ -17,19 +17,18 @@ function callPromise(e) {
   e.preventDefault();
   btnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
 
-  setTimeout(() => {
-    let enteredAmount = +amountRef.value;
-    let stepDelay = +stepRef.value;
-    let firstDelay = +delayRef.value;
-    let sumDelay = +firstDelay;
+  let enteredAmount = +amountRef.value;
+  let stepDelay = +stepRef.value;
+  let firstDelay = +delayRef.value;
+  let sumDelay = firstDelay;
 
+  setTimeout(() => {
     formRef.reset();
 
     id = setInterval(() => {
       createPromise(defaultAmount, sumDelay)
         .then(({ position, delay }) => {
           console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-
           Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
         })
         .catch(({ position, delay }) => {
@@ -46,8 +45,8 @@ function callPromise(e) {
 
       defaultAmount++;
       sumDelay += stepDelay;
-    }, sumDelay);
-  }, delayRef.value);
+    }, stepDelay);
+  }, firstDelay);
 }
 
 function createPromise(position, delay) {
