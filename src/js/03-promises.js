@@ -19,16 +19,14 @@ function callPromise(e) {
 
   setTimeout(() => {
     let enteredAmount = +amountRef.value;
-    let stepDelay = stepRef.value;
+    let stepDelay = +stepRef.value;
+    let firstDelay = +delayRef.value;
+    let sumDelay = +firstDelay;
+
     formRef.reset();
 
     id = setInterval(() => {
-      if (defaultAmount === enteredAmount) {
-        clearInterval(id);
-        btnRef.removeAttribute(DISABLED_ATTRIBUTE_VALUE);
-      }
-
-      createPromise(defaultAmount, stepDelay)
+      createPromise(defaultAmount, sumDelay)
         .then(({ position, delay }) => {
           console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
 
@@ -39,8 +37,16 @@ function callPromise(e) {
           Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
         });
 
+      if (defaultAmount === enteredAmount) {
+        clearInterval(id);
+        btnRef.removeAttribute(DISABLED_ATTRIBUTE_VALUE);
+        defaultAmount = 1;
+        return;
+      }
+
       defaultAmount++;
-    }, stepDelay);
+      sumDelay += stepDelay;
+    }, sumDelay);
   }, delayRef.value);
 }
 
