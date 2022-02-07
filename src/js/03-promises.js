@@ -22,9 +22,9 @@ function callPromise(e) {
   let firstDelay = +delayRef.value;
   let sumDelay = firstDelay;
 
-  setTimeout(() => {
-    formRef.reset();
+  formRef.reset();
 
+  setTimeout(() => {
     id = setInterval(() => {
       createPromise(defaultAmount, sumDelay)
         .then(({ position, delay }) => {
