@@ -1,8 +1,6 @@
 const startBtnRef = document.querySelector('[data-start]');
 const stopBtnRef = document.querySelector('[data-stop]');
 const wrapperRef = document.createElement('div');
-const DISABLED_ATTRIBUTE_NAME = 'disabled';
-const DISABLED_ATTRIBUTE_VALUE = 'disabled';
 const BACKGROUND_COLOR = 'background-color';
 
 let timerId = null;
@@ -11,7 +9,7 @@ wrapperRef.classList.add('wrapper');
 startBtnRef.classList.add('btn');
 stopBtnRef.classList.add('btn');
 
-document.body.append(wrapperRef);
+document.body.children[0].after(wrapperRef);
 wrapperRef.append(startBtnRef, stopBtnRef);
 
 updateBgColor();
@@ -19,9 +17,9 @@ updateBgColor();
 startBtnRef.addEventListener('click', startChangeningBgColor);
 stopBtnRef.addEventListener('click', stopChangeningBgColor);
 
-function startChangeningBgColor() {
-  stopBtnRef.removeAttribute(DISABLED_ATTRIBUTE_NAME);
-  startBtnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
+function startChangeningBgColor(e) {
+  e.target.nextElementSibling.disabled = false;
+  e.target.disabled = true;
 
   timerId = setInterval(() => {
     let color = getRandomHexColor();
@@ -31,15 +29,15 @@ function startChangeningBgColor() {
   }, 1000);
 }
 
-function stopChangeningBgColor() {
+function stopChangeningBgColor(e) {
   if (!startBtnRef.hasAttribute(DISABLED_ATTRIBUTE_NAME)) {
     return;
   }
 
   clearInterval(timerId);
 
-  stopBtnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
-  startBtnRef.removeAttribute(DISABLED_ATTRIBUTE_NAME);
+  e.target.disabled = true;
+  e.target.previousElementSibling.disabled = false;
 }
 
 function updateBgColor() {
