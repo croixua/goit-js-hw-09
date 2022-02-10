@@ -1,52 +1,52 @@
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
 const formRef = document.querySelector('form');
-const inputsRef = document.querySelectorAll('input');
 const btnRef = document.querySelector('button');
-const delayRef = inputsRef[0];
-const stepRef = inputsRef[1];
-const amountRef = inputsRef[2];
-const DISABLED_ATTRIBUTE_NAME = 'disabled';
-const DISABLED_ATTRIBUTE_VALUE = 'disabled';
 let defaultAmount = 1;
 let id = null;
 
-formRef.addEventListener('submit', callPromise);
+formRef.addEventListener('submit', onSubmit);
 
-function callPromise(e) {
+function onSubmit(e) {
   e.preventDefault();
-  btnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
 
-  let enteredAmount = +amountRef.value;
-  let stepDelay = +stepRef.value;
-  let firstDelay = +delayRef.value;
-  let sumDelay = firstDelay;
+  btnRef.setAttribute('disabled', 'disabled');
 
-  formRef.reset();
+  const elements = e.target.elements;
+  let step = +elements.step.value;
+  let delay = +elements.delay.value;
+  let amount = +elements.amount.value;
 
-  setTimeout(() => {
-    id = setInterval(() => {
-      createPromise(defaultAmount, sumDelay)
-        .then(({ position, delay }) => {
-          console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-        })
-        .catch(({ position, delay }) => {
-          console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-        });
+  if (step < 0 || delay < 0 || amount <= 0) {
+    e.target.reset();
+    btnRef.removeAttribute('disabled');
+    return Notify.failure('Enter values greater than or equal to 0');
+  }
 
-      if (defaultAmount === enteredAmount) {
-        clearInterval(id);
-        btnRef.removeAttribute(DISABLED_ATTRIBUTE_VALUE);
-        defaultAmount = 1;
-        return;
-      }
+  e.target.reset();
 
-      defaultAmount++;
-      sumDelay += stepDelay;
-    }, stepDelay);
-  }, firstDelay);
+  id = setInterval(() => {
+    console.log(delay);
+    createPromise(defaultAmount, delay)
+      .then(({ position, delay }) => {
+        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
+
+    if (defaultAmount === amount) {
+      clearInterval(id);
+      btnRef.removeAttribute('disabled');
+      defaultAmount = 1;
+      return;
+    }
+
+    defaultAmount++;
+    delay += step;
+  }, delay);
 }
 
 function createPromise(position, delay) {
@@ -60,11 +60,3 @@ function createPromise(position, delay) {
     }
   });
 }
-
-createPromise(2, 1500)
-  .then(({ position, delay }) => {
-    console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-  })
-  .catch(({ position, delay }) => {
-    console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-  });
