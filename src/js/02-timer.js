@@ -8,8 +8,7 @@ const dataDaysRef = document.querySelector('[data-days]');
 const dataHoursRef = document.querySelector('[data-hours]');
 const dataMinutesRef = document.querySelector('[data-minutes]');
 const dataSecondsRef = document.querySelector('[data-seconds]');
-const DISABLED_ATTRIBUTE_NAME = 'disabled';
-const DISABLED_ATTRIBUTE_VALUE = 'disabled';
+const DISABLED_ATTRIBUTE = 'disabled';
 let timerId = null;
 
 const options = {
@@ -18,49 +17,51 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onChange() {
+    defaultTimerUI();
     clearInterval(timerId);
   },
   onClose(selectedDates) {
     if (options.defaultDate > selectedDates[0]) {
-      startBtnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
-      Notify.failure('Please choose a date in the future');
-      return;
+      console.dir(options.defaultDate.getTime() > selectedDates[0].getTime());
+      onCloseBtn();
+      return Notify.failure('Please choose a date in the future');
     }
-    startBtnRef.removeAttribute(DISABLED_ATTRIBUTE_NAME);
+    onOpenBtn();
   },
 };
 
 startBtnRef.addEventListener('click', startCountdown);
-startBtnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
+onCloseBtn();
 
 const fp = flatpickr(inputRef, options);
 
 function startCountdown() {
   const selectedDates = fp.selectedDates[0];
 
-  startBtnRef.setAttribute(DISABLED_ATTRIBUTE_NAME, DISABLED_ATTRIBUTE_VALUE);
+  onCloseBtn();
 
   timerId = setInterval(() => {
     const currentDate = Date.now();
-
     const differenceTime = selectedDates - currentDate;
     const { days, hours, minutes, seconds } = convertMs(differenceTime);
+
+    if (differenceTime <= 1000) {
+      clearInterval(timerId);
+      return;
+    }
+
     dataDaysRef.textContent = days;
     dataHoursRef.textContent = hours;
     dataMinutesRef.textContent = minutes;
     dataSecondsRef.textContent = seconds;
-
-    setInterval(() => {
-      if (
-        dataDaysRef.textContent === '00' &&
-        dataHoursRef.textContent === '00' &&
-        dataMinutesRef.textContent === '00' &&
-        dataSecondsRef.textContent === '00'
-      ) {
-        clearInterval(timerId);
-      }
-    }, 1000);
   }, 1000);
+}
+
+function defaultTimerUI() {
+  dataDaysRef.textContent = '00';
+  dataHoursRef.textContent = '00';
+  dataMinutesRef.textContent = '00';
+  dataSecondsRef.textContent = '00';
 }
 
 function addLeadingZero(value) {
@@ -84,4 +85,12 @@ function convertMs(ms) {
   const seconds = addLeadingZero(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
+}
+
+function onOpenBtn() {
+  startBtnRef.removeAttribute(DISABLED_ATTRIBUTE);
+}
+
+function onCloseBtn() {
+  startBtnRef.setAttribute(DISABLED_ATTRIBUTE, DISABLED_ATTRIBUTE);
 }
