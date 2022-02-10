@@ -26,7 +26,6 @@ function onSubmit(e) {
   e.target.reset();
 
   id = setInterval(() => {
-    console.log(delay);
     createPromise(defaultAmount, delay)
       .then(({ position, delay }) => {
         console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
