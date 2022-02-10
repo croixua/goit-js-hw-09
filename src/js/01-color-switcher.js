@@ -19,7 +19,7 @@ startBtnRef.addEventListener('click', startChangeningBgColor);
 stopBtnRef.addEventListener('click', stopChangeningBgColor);
 
 function startChangeningBgColor(e) {
-  e.target.nextElementSibling.disabled = false;
+  stopBtnRef.removeAttribute('disabled');
   e.target.disabled = true;
 
   timerId = setInterval(() => {
@@ -36,7 +36,7 @@ function stopChangeningBgColor(e) {
   }
 
   e.target.disabled = true;
-  e.target.previousElementSibling.disabled = false;
+  startBtnRef.removeAttribute('disabled');
 
   clearInterval(timerId);
 }
