@@ -13,6 +13,7 @@ document.body.children[0].after(wrapperRef);
 wrapperRef.append(startBtnRef, stopBtnRef);
 
 updateBgColor();
+stopBtnRef.setAttribute('disabled', 'disabled');
 
 startBtnRef.addEventListener('click', startChangeningBgColor);
 stopBtnRef.addEventListener('click', stopChangeningBgColor);
