@@ -30,14 +30,14 @@ function startChangeningBgColor(e) {
 }
 
 function stopChangeningBgColor(e) {
-  if (!startBtnRef.hasAttribute(DISABLED_ATTRIBUTE_NAME)) {
+  if (e.target.disabled) {
     return;
   }
 
-  clearInterval(timerId);
-
   e.target.disabled = true;
   e.target.previousElementSibling.disabled = false;
+
+  clearInterval(timerId);
 }
 
 function updateBgColor() {
