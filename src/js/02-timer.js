@@ -47,7 +47,6 @@ function startCountdown() {
 
     if (differenceTime <= 1000) {
       clearInterval(timerId);
-      return;
     }
 
     dataDaysRef.textContent = days;
