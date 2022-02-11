@@ -16,6 +16,7 @@ function onSubmit(e) {
   const step = +elements.step.value;
   const amount = +elements.amount.value;
   let delay = +elements.delay.value;
+  const sumDelay = step * amount + delay;
 
   if (step < 0 || delay < 0 || amount <= 0) {
     e.target.reset();
@@ -23,30 +24,31 @@ function onSubmit(e) {
     return Notify.failure('Enter values greater than or equal to 0');
   }
 
+  setTimeout(() => {
+    btnRef.removeAttribute('disabled');
+  }, sumDelay);
+
   e.target.reset();
 
-  setTimeout(() => {
-    for (let i = 0; i <= amount; i++) {
-      createPromise(defaultAmount, delay, step, amount)
-        .then(({ position, delay }) => {
-          console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-        })
-        .catch(({ position, delay }) => {
-          console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-        });
+  for (let i = 0; i <= amount; i++) {
+    createPromise(defaultAmount, delay)
+      .then(({ position, delay }) => {
+        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+      })
+      .catch(({ position, delay }) => {
+        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+      });
 
-      if (defaultAmount === amount) {
-        btnRef.removeAttribute('disabled');
-        defaultAmount = 1;
-        return;
-      }
-
-      delay += step;
-      defaultAmount++;
+    if (defaultAmount === amount) {
+      defaultAmount = 1;
+      return;
     }
-  }, delay);
+
+    delay += step;
+    defaultAmount++;
+  }
 }
 
 function createPromise(position, delay) {
