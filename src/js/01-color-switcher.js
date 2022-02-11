@@ -26,7 +26,7 @@ function startChangeningBgColor(e) {
     let color = getRandomHexColor();
 
     changeBodyBgColor(color);
-    localStorage.setItem(BACKGROUND_COLOR, `${color}`);
+    localStorage.setItem(BACKGROUND_COLOR, color);
   }, 1000);
 }
 
@@ -48,7 +48,7 @@ function updateBgColor() {
 }
 
 function changeBodyBgColor(color) {
-  document.body.style.backgroundColor = `${color}`;
+  document.body.style.backgroundColor = color;
 }
 
 function getRandomHexColor() {
