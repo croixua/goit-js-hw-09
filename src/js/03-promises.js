@@ -13,9 +13,9 @@ function onSubmit(e) {
   btnRef.setAttribute('disabled', 'disabled');
 
   const elements = e.target.elements;
-  let step = +elements.step.value;
+  const step = +elements.step.value;
+  const amount = +elements.amount.value;
   let delay = +elements.delay.value;
-  let amount = +elements.amount.value;
 
   if (step < 0 || delay < 0 || amount <= 0) {
     e.target.reset();
@@ -25,26 +25,27 @@ function onSubmit(e) {
 
   e.target.reset();
 
-  id = setInterval(() => {
-    createPromise(defaultAmount, delay)
-      .then(({ position, delay }) => {
-        console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
-        Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
-      })
-      .catch(({ position, delay }) => {
-        console.log(`❌ Rejected promise ${position} in ${delay}ms`);
-        Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
-      });
+  setTimeout(() => {
+    for (let i = 0; i <= amount; i++) {
+      createPromise(defaultAmount, delay, step, amount)
+        .then(({ position, delay }) => {
+          console.log(`✅ Fulfilled promise ${position} in ${delay}ms`);
+          Notify.success(`✅ Fulfilled promise ${position} in ${delay}ms`);
+        })
+        .catch(({ position, delay }) => {
+          console.log(`❌ Rejected promise ${position} in ${delay}ms`);
+          Notify.failure(`❌ Rejected promise ${position} in ${delay}ms`);
+        });
 
-    if (defaultAmount === amount) {
-      clearInterval(id);
-      btnRef.removeAttribute('disabled');
-      defaultAmount = 1;
-      return;
+      if (defaultAmount === amount) {
+        btnRef.removeAttribute('disabled');
+        defaultAmount = 1;
+        return;
+      }
+
+      delay += step;
+      defaultAmount++;
     }
-
-    defaultAmount++;
-    delay += step;
   }, delay);
 }
 
@@ -52,10 +53,12 @@ function createPromise(position, delay) {
   const shouldResolve = Math.random() > 0.3;
 
   return new Promise((resolve, reject) => {
-    if (shouldResolve) {
-      resolve({ position, delay });
-    } else {
-      reject({ position, delay });
-    }
+    setTimeout(() => {
+      if (shouldResolve) {
+        resolve({ position, delay });
+      } else {
+        reject({ position, delay });
+      }
+    }, delay);
   });
 }
